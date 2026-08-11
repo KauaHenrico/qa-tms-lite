@@ -28,7 +28,9 @@ Para abrir o Cypress de forma visual, inicie a aplicação em um terminal com
 
 ## Cenários automatizados
 
-Os cenários e sua justificativa serão registrados junto às respectivas suítes.
+| # | Cenário | Risco coberto | Por que priorizei |
+|---|---|---|---|
+| 1 | Impedir salto de `CRIADA` para `ENTREGUE` | Uma entrega pode ser concluída sem coleta, trânsito ou saída para entrega | É o risco operacional mais grave relatado: o status pode induzir atendimento e expedição a tomarem decisões erradas. |
 
 ## Observações
 
