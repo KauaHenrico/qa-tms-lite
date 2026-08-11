@@ -33,18 +33,22 @@ Para abrir o Cypress de forma visual, inicie a aplicação em um terminal com
 
 | # | Cenário | Risco coberto | Por que priorizei |
 |---|---|---|---|
-| 1 | Pela tela, impedir salto de `CRIADA` para `ENTREGUE` | Uma entrega pode ser concluída sem coleta, trânsito ou saída para entrega | É o risco operacional mais grave relatado: o status pode induzir atendimento e expedição a tomarem decisões erradas. |
-| 2 | Pela tela, tentar cadastrar peso zero e volume fracionado | Dados fisicamente inválidos entram na operação e comprometem expedição e cálculo de carga | O cadastro é a porta de entrada da operação; valores inválidos contaminam as informações posteriores. |
-| 3 | Pela tela, cadastrar e conferir o prazo em dias úteis | O atendimento informa ao cliente uma data menor que o prazo contratado | É uma falha relatada pela Operação e afeta diretamente a promessa feita ao cliente. |
-| 4 | Pela tela, filtrar status e conferir o total apresentado | O indicador da tela diverge da lista e prejudica a gestão operacional | A divergência foi relatada pela Operação e pode levar a acompanhamento incorreto do volume de entregas. |
+| 1 | Status: avanço, bloqueios, sequência completa, devolução e histórico inicial | Uma entrega pode ser concluída, cancelada ou alterada fora do fluxo permitido | É o risco operacional mais grave relatado: o status pode induzir atendimento e expedição a tomarem decisões erradas. |
+| 2 | Cadastro: campos vazios, espaços, peso, volumes, preservação e cadastro válido | Dados fisicamente inválidos entram na operação e comprometem expedição e cálculo de carga | O cadastro é a porta de entrada da operação; valores inválidos contaminam as informações posteriores. |
+| 3 | Indicação de campos obrigatórios no formulário | A pessoa não consegue identificar, antes do envio, quais dados precisa informar | A ausência de orientação aumenta recusas e retrabalho no cadastro. |
+| 4 | Prazo: quinta, sexta, sábado e massa inicial | O atendimento informa ao cliente uma data menor que o prazo contratado | É uma falha relatada pela Operação e afeta diretamente a promessa feita ao cliente. |
+| 5 | Busca, filtros, canceladas, contador e paginação | O indicador da tela diverge da lista e a busca deixa de encontrar entregas | A divergência foi relatada pela Operação e prejudica o acompanhamento do volume de entregas. |
+| 6 | Transportadoras ativas e CNPJ exibido | Uma transportadora inativa pode ser usada ou dados da integração podem ser formatados indevidamente | São regras de cadastro verificadas diretamente na tela. |
+| 7 | Dois envios rápidos de cadastro | Entregas distintas podem receber o mesmo código de rastreio | O código é a referência do cliente para acompanhar a carga e precisa ser único. |
 
 ## Observações
 
 Cada caso restaura os dados iniciais antes de rodar para não depender da ordem
 de execução. Screenshots gerados por falhas ficam fora do versionamento.
 
-Na versão avaliada, quatro testes falham porque encontram os comportamentos
-documentados nos bugs de status, cadastro, prazo e listagem. O caso de volume
-fracionado passa porque a própria tela impede o envio de número não inteiro.
-As falhas não são instabilidade: as asserções representam o contrato do README
-e devem passar depois da correção.
+A suíte contém 11 arquivos e 44 cenários de interface. Na execução atual,
+14 passam e 30 falham por comportamentos já documentados nos bugs de status,
+cadastro, prazo, rastreio e listagem. O caso de volume fracionado passa porque
+a própria tela impede o envio de número não inteiro. As falhas não são
+instabilidade: as asserções representam o contrato do README e devem passar
+depois da correção.
