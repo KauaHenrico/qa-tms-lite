@@ -23,9 +23,20 @@ As três requisições retornaram `200`. A entrega 5 ficou `ENTREGUE`, a entrega
 **Evidência visual:** [vídeo da reprodução](../evidencias/BUG-01-validacao-do-fluxo-de-status.mp4).
 
 ```text
-CRIADA para ENTREGUE: esperado 422; obtido HTTP 200, status=ENTREGUE
-EM_TRANSITO para CANCELADA: esperado 422; obtido HTTP 200, status=CANCELADA
-ENTREGUE para COLETADA: esperado 422; obtido HTTP 200, status=COLETADA
+PATCH /api/entregas/5/status
+corpo enviado: {"status":"ENTREGUE","descricao":"Teste QA"}
+HTTP 200
+{"id":5,"codigo":"BRD-2026-00005","id_transportadora":2,"destinatario_nome":"Cliente 5","cidade":"Salvador","uf":"BA","status":"ENTREGUE","peso_kg":8.5,"volumes":2,"data_coleta":"2026-06-06","data_prazo":"2026-07-06","historico":[{"status":"CRIADA","data":"2026-06-06","descricao":"Entrega registrada"},{"status":"ENTREGUE","data":"2026-08-10","descricao":"Teste QA"}]}
+
+PATCH /api/entregas/2/status
+corpo enviado: {"status":"CANCELADA","descricao":"Teste QA"}
+HTTP 200
+{"id":2,"codigo":"BRD-2026-00002","id_transportadora":3,"destinatario_nome":"Cliente 2","cidade":"Belo Horizonte","uf":"MG","status":"CANCELADA","peso_kg":3.4,"volumes":3,"data_coleta":"2026-06-03","data_prazo":"2026-07-03","historico":[{"status":"CRIADA","data":"2026-06-03","descricao":"Entrega registrada"},{"status":"CANCELADA","data":"2026-08-10","descricao":"Teste QA"}]}
+
+PATCH /api/entregas/4/status
+corpo enviado: {"status":"COLETADA","descricao":"Teste QA"}
+HTTP 200
+{"id":4,"codigo":"BRD-2026-00004","id_transportadora":1,"destinatario_nome":"Cliente 4","cidade":"Porto Alegre","uf":"RS","status":"COLETADA","peso_kg":6.8,"volumes":1,"data_coleta":"2026-06-05","data_prazo":"2026-07-05","historico":[{"status":"CRIADA","data":"2026-06-05","descricao":"Entrega registrada"},{"status":"COLETADA","data":"2026-08-10","descricao":"Teste QA"}]}
 ```
 
 Pela tela, a entrega `BRD-2026-00005` também foi alterada diretamente de `CRIADA` para `ENTREGUE` e recebeu esse evento no histórico.
