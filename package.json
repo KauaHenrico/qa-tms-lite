@@ -5,9 +5,16 @@
   "description": "TMS Lite - gestao de entregas",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "cypress:run": "cypress run",
+    "cypress:open": "cypress open",
+    "test:e2e": "start-server-and-test start http://localhost:3000 cypress:run"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "cypress": "^15.20.1",
+    "start-server-and-test": "^3.0.12"
   }
 }
