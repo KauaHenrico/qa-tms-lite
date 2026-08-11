@@ -22,11 +22,11 @@
 
 **Resultado esperado:** cada alteração deve retornar `200`. O histórico deve registrar as cinco etapas, incluindo o cadastro inicial.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** As quatro alterações retornaram `200`; a entrega terminou em `ENTREGUE` e o histórico ficou com cinco registros.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 02: Concluir a sequência válida com devolução
 
@@ -48,11 +48,11 @@
 
 **Resultado esperado:** cada alteração deve retornar `200`. A etapa final deve ser `DEVOLVIDA` e o histórico deve registrar todo o caminho.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** As quatro alterações retornaram `200`; a entrega terminou em `DEVOLVIDA` e o histórico registrou todo o fluxo.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 03: Avançar uma etapa válida do fluxo de status
 
@@ -71,11 +71,11 @@
 
 **Resultado esperado:** resposta `200`, status `COLETADA` e novo item no histórico com o status, a data e a descrição informada.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A alteração para `COLETADA` retornou `200` e foi incluída no histórico.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 04: Permitir cancelamento enquanto a entrega está `CRIADA`
 
@@ -93,11 +93,11 @@
 
 **Resultado esperado:** resposta `200`, status `CANCELADA` e registro no histórico.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** O cancelamento da entrega em `CRIADA` retornou `200` e criou o registro no histórico.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 05: Permitir cancelamento enquanto a entrega está `COLETADA`
 
@@ -116,11 +116,11 @@
 
 **Resultado esperado:** ambas as alterações devem retornar `200`; o cancelamento é permitido até `COLETADA`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Após a coleta, o cancelamento retornou `200` e o histórico foi atualizado.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 06: Impedir salto de `CRIADA` para `ENTREGUE`
 
@@ -139,11 +139,11 @@
 
 **Resultado esperado:** resposta `422`; a entrega deve permanecer em `CRIADA` e o histórico não pode ser alterado, pois não é permitido pular etapas.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A API retornou `200` e alterou diretamente o status para `ENTREGUE`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-01-validacao-do-fluxo-de-status.md`.
 
 ### CT 07: Impedir cancelamento após a entrada em trânsito
 
@@ -161,11 +161,11 @@
 
 **Resultado esperado:** resposta `422`; a entrega deve continuar em `EM_TRANSITO` e não deve ganhar histórico de cancelamento.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A API retornou `200` e cancelou a entrega que estava em `EM_TRANSITO`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-01-validacao-do-fluxo-de-status.md`.
 
 ### CT 08: Impedir alteração de status final
 
@@ -183,11 +183,11 @@
 
 **Resultado esperado:** resposta `422`; `ENTREGUE` é status final e a entrega não pode mudar.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A API retornou `200` e mudou uma entrega `ENTREGUE` para `COLETADA`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-01-validacao-do-fluxo-de-status.md`.
 
 ### CT 09: Rejeitar status inexistente
 
@@ -205,13 +205,13 @@
 
 **Resultado esperado:** resposta `422` com erro indicando status inválido; a entrega não é alterada.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A API retornou `422` com a mensagem `Status inválido: INVALIDO`.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
-### CT 10: Exibir histórico coerente para entrega já finalizada
+### CT 10: Exibir histórico coerente para as entregas iniciais fora de `CRIADA`
 
 | | |
 |---|---|
@@ -220,19 +220,20 @@
 | **Tipo** | Integridade de dados |
 | **Camada** | API e UI |
 
-**Pré-condição:** dados resetados; entrega `id=4` inicia em `ENTREGUE`.
+**Pré-condição:** dados resetados; massa inicial carregada.
 
 **Passos:**
-1. Consultar `GET /api/entregas/4` ou abrir a entrega `BRD-2026-00004` na tela.
-2. Conferir os itens de `historico`.
+1. Consultar as entregas iniciais de `id=1` a `id=42`.
+2. Selecionar as entregas com status diferente de `CRIADA`.
+3. Conferir o status e os itens de `historico` de cada uma.
 
-**Resultado esperado:** uma entrega em `ENTREGUE` deve conter os registros das mudanças aceitas que a levaram até o estado final, permitindo rastrear a coleta, trânsito e saída para entrega.
+**Resultado esperado:** cada entrega em status posterior a `CRIADA` deve conter os registros das mudanças aceitas que a levaram ao estado atual, permitindo rastrear coleta, trânsito e saída para entrega.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Das 42 entregas iniciais, 34 começam em status diferente de `CRIADA`; todas as 34 possuem somente `CRIADA` no histórico. A entrega `id=4` é um exemplo.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-02-historico-inicial-incompleto.md`.
 
 ### CT 11: Impedir salto de status pela interface web
 
@@ -252,11 +253,11 @@
 
 **Resultado esperado:** a tela deve informar que a transição não é permitida; o status deve permanecer `CRIADA`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Pela tela, a entrega `BRD-2026-00005` foi alterada de `CRIADA` para `ENTREGUE` e o evento foi gravado no histórico.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-01-validacao-do-fluxo-de-status.md`.
 
 ## 2. Cadastro e rastreio
 
@@ -277,11 +278,11 @@
 
 **Resultado esperado:** resposta `201`; entrega criada em `CRIADA`, com código de rastreio e histórico inicial.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** O cadastro retornou `201`, com código de rastreio preenchido e status inicial `CRIADA`.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 13: Rejeitar campo obrigatório ausente
 
@@ -295,15 +296,15 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Enviar `POST /api/entregas` com todos os campos válidos, exceto `destinatario_nome` vazio.
+1. Enviar tentativas separadas com todos os campos válidos, deixando vazio `id_transportadora`, `destinatario_nome`, `cidade` e `uf`.
 
 **Resultado esperado:** resposta `422`, mensagem que identifique o campo e nenhuma entrega criada.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A API retornou `422` para `id_transportadora`, `destinatario_nome`, `cidade` e `uf` vazios, identificando cada campo na mensagem.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 14: Rejeitar campos textuais preenchidos apenas com espaços
 
@@ -323,11 +324,11 @@
 
 **Resultado esperado:** resposta `422`; campos textuais em branco ou somente espaços não são válidos.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** O cadastro com campos contendo apenas espaços retornou `201`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-03-validacao-de-cadastro.md`.
 
 ### CT 15: Rejeitar transportadora inativa
 
@@ -345,11 +346,11 @@
 
 **Resultado esperado:** resposta `422` indicando que a transportadora está inativa; nenhuma entrega é criada.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A API retornou `422` para a transportadora inativa.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 16: Retornar erro para transportadora inexistente
 
@@ -367,11 +368,11 @@
 
 **Resultado esperado:** resposta `404` e nenhuma entrega criada.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A API retornou `404` para a transportadora inexistente.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ### CT 17: Rejeitar peso zero e negativo
 
@@ -391,11 +392,11 @@
 
 **Resultado esperado:** ambos os cadastros devem retornar `422`, pois o peso precisa ser maior que zero.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Os cadastros com peso `0` e `-1` retornaram `201`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-03-validacao-de-cadastro.md`.
 
 ### CT 18: Rejeitar volumes zero, negativos e fracionários
 
@@ -415,11 +416,11 @@
 
 **Resultado esperado:** cada tentativa deve retornar `422`, pois volumes é inteiro e tem mínimo `1`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Os cadastros com volumes `0`, `-1` e `1.5` retornaram `201`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-03-validacao-de-cadastro.md`.
 
 ### CT 19: Validar peso e volumes em valores de limite
 
@@ -437,39 +438,17 @@
 2. Tentar cadastrar com volumes `-1`.
 3. Tentar cadastrar com volumes em formato textual, por exemplo `abc`.
 4. Tentar cadastrar sem peso e, em outra tentativa, sem volumes.
+5. Repetir as duas tentativas informando peso e volumes como texto vazio.
 
 **Resultado esperado:** o cadastro com peso `0.01` deve ser aceito. As demais tentativas devem retornar `422` e não criar entrega.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** O peso `0.01` foi aceito, porém volume textual, peso ausente, volumes ausentes, peso vazio e volumes vazios também retornaram `201`. Os valores vazios foram gravados como `0`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-03-validacao-de-cadastro.md`.
 
-### CT 20: Assumir a data local atual quando a coleta não é informada
-
-| | |
-|---|---|
-| **Funcionalidade** | Cadastro e data de coleta |
-| **Prioridade** | Média |
-| **Tipo** | Limite de data / fuso horário |
-| **Camada** | API |
-
-**Pré-condição:** executar próximo à meia-noite local, registrar a data e hora do ambiente e resetar os dados.
-
-**Passos:**
-1. Enviar cadastro válido sem o campo `data_coleta`.
-2. Conferir `data_coleta` da entrega criada.
-
-**Resultado esperado:** a data de coleta deve ser a data local da execução, `2026-08-09`.
-
-**Resultado obtido:** A executar.
-
-**Status:** Não executado
-
-**Bug relacionado:** A preencher caso o cenário falhe.
-
-### CT 21: Garantir unicidade do código de rastreio sob cadastros simultâneos
+### CT 20: Garantir unicidade do código de rastreio sob cadastros simultâneos
 
 | | |
 |---|---|
@@ -486,13 +465,13 @@
 
 **Resultado esperado:** as oito respostas `201` devem conter códigos distintos no formato `BRD-2026-XXXXX`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Oito cadastros simultâneos retornaram `201` com o mesmo código `BRD-2026-84290`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-04-codigo-de-rastreio-duplicado.md`.
 
-### CT 22: Mostrar erro e manter os valores do formulário
+### CT 21: Mostrar erro e manter os valores do formulário
 
 | | |
 |---|---|
@@ -510,15 +489,15 @@
 
 **Resultado esperado:** a tela deve informar que o peso é inválido, não criar a entrega e manter os dados preenchidos para correção.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Pela tela, o cadastro com peso `0` exibiu confirmação de sucesso e limpou os campos do formulário.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-03-validacao-de-cadastro.md`.
 
 ## 3. Prazo de entrega
 
-### CT 23: Calcular prazo considerando apenas dias úteis
+### CT 22: Calcular prazo considerando apenas dias úteis
 
 | | |
 |---|---|
@@ -535,13 +514,13 @@
 
 **Resultado esperado:** `2026-07-07`; devem ser contados sexta, segunda e terça, sem sábado e domingo.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Para coleta em `2026-07-02` e prazo de três dias, a API retornou `2026-07-05`; o esperado era `2026-07-07`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-05-calculo-de-prazo-em-dias-corridos.md`.
 
-### CT 24: Exibir prazo compatível com a transportadora em entrega já existente
+### CT 23: Exibir prazo compatível com a transportadora em entrega já existente
 
 | | |
 |---|---|
@@ -558,13 +537,13 @@
 
 **Resultado esperado:** `data_prazo` igual a `2026-06-09`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A entrega inicial `id=1`, com coleta em `2026-06-02`, informou prazo `2026-07-02`; o esperado era `2026-06-09`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-06-prazo-incorreto-na-massa-inicial.md`.
 
-### CT 25: Calcular prazo para coleta em sexta feira
+### CT 24: Calcular prazo para coleta em sexta feira
 
 | | |
 |---|---|
@@ -581,13 +560,13 @@
 
 **Resultado esperado:** o prazo deve ser `2026-07-08`, contando segunda, terça e quarta.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Para coleta em `2026-07-03`, a API retornou `2026-07-06`; o esperado era `2026-07-08`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-05-calculo-de-prazo-em-dias-corridos.md`.
 
-### CT 26: Calcular prazo para coleta no sábado e no domingo
+### CT 25: Calcular prazo para coleta no sábado e no domingo
 
 | | |
 |---|---|
@@ -605,39 +584,15 @@
 
 **Resultado esperado:** nas duas situações, o prazo deve ser `2026-07-08`, pois a contagem começa na segunda feira.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Para sábado, retornou `2026-07-07` em vez de `2026-07-08`; para domingo, retornou `2026-07-08`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
-
-### CT 27: Definir o tratamento para feriado
-
-| | |
-|---|---|
-| **Funcionalidade** | Prazo de entrega |
-| **Prioridade** | Média |
-| **Tipo** | Regra pendente |
-| **Camada** | API |
-
-**Pré condição:** definição de negócio sobre se feriados nacionais, estaduais ou municipais devem ser excluídos da contagem.
-
-**Passos:**
-1. Confirmar com Operações qual calendário deve ser usado.
-2. Escolher uma data de coleta cujo período inclua um feriado definido pela regra.
-3. Cadastrar a entrega e comparar o prazo calculado com o calendário acordado.
-
-**Resultado esperado:** depende da decisão de negócio. O README atual só manda excluir sábados e domingos.
-
-**Resultado obtido:** A executar.
-
-**Status:** Não executado
-
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-05-calculo-de-prazo-em-dias-corridos.md`.
 
 ## 4. Listagem, busca, filtros e paginação
 
-### CT 28: Ocultar canceladas da listagem padrão
+### CT 26: Ocultar canceladas da listagem padrão
 
 | | |
 |---|---|
@@ -654,13 +609,13 @@
 
 **Resultado esperado:** nenhuma entrega `CANCELADA` deve estar nos itens da listagem padrão.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A listagem padrão retornou 39 entregas, sem nenhuma com status `CANCELADA`.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
-### CT 29: Incluir canceladas quando solicitado
+### CT 27: Incluir canceladas quando solicitado
 
 | | |
 |---|---|
@@ -677,13 +632,13 @@
 
 **Resultado esperado:** as entregas canceladas devem aparecer na lista.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Com `incluir_canceladas=true`, a API retornou 42 entregas, incluindo três canceladas.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
-### CT 30: Buscar pelo código de rastreio
+### CT 28: Buscar pelo código de rastreio
 
 | | |
 |---|---|
@@ -700,13 +655,13 @@
 
 **Resultado esperado:** a busca deve retornar somente a entrega de código `BRD-2026-00008`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A busca pelo código `BRD-2026-00008` retornou somente a entrega correspondente.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
-### CT 31: Buscar parte do nome do destinatário
+### CT 29: Buscar parte do nome do destinatário
 
 | | |
 |---|---|
@@ -723,13 +678,13 @@
 
 **Resultado esperado:** devem aparecer apenas entregas cujo destinatário contém `Cliente 1`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A busca por `Cliente 1` retornou apenas registros cujo destinatário contém o termo pesquisado.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
-### CT 32: Buscar por cidade sem diferenciação de acento
+### CT 30: Buscar por cidade sem diferenciação de acento
 
 | | |
 |---|---|
@@ -745,13 +700,13 @@
 
 **Resultado esperado:** retornar as mesmas cinco entregas que uma busca por `São Paulo`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A busca por `sao paulo` retornou zero itens, embora existam entregas para `São Paulo`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-07-busca-sensivel-a-acento-e-caixa.md`.
 
-### CT 33: Buscar por cidade sem diferenciação entre maiúsculas e minúsculas
+### CT 31: Buscar por cidade sem diferenciação entre maiúsculas e minúsculas
 
 | | |
 |---|---|
@@ -768,13 +723,13 @@
 
 **Resultado esperado:** ambas as buscas devem retornar os mesmos cinco itens.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A busca por `SÃO PAULO` retornou zero itens.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-07-busca-sensivel-a-acento-e-caixa.md`.
 
-### CT 34: Filtrar por cada status disponível
+### CT 32: Filtrar por cada status disponível
 
 | | |
 |---|---|
@@ -791,13 +746,13 @@
 
 **Resultado esperado:** todos os itens retornados devem ter exatamente o status selecionado e o total deve corresponder à quantidade encontrada.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Os itens retornados respeitaram cada status, mas o campo `total` permaneceu `42` em todos os filtros.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-08-total-nao-respeita-filtros.md`.
 
-### CT 35: Consultar entregas canceladas com e sem a opção de inclusão
+### CT 33: Consultar entregas canceladas com e sem a opção de inclusão
 
 | | |
 |---|---|
@@ -814,13 +769,13 @@
 
 **Resultado esperado:** sem a opção, as canceladas não devem aparecer. Com a opção, devem aparecer somente entregas canceladas e o total deve refletir essa lista.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Sem a opção de inclusão, não houve itens; com a opção, foram retornadas três canceladas. Nos dois casos, `total` ficou em `42`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-08-total-nao-respeita-filtros.md`.
 
-### CT 36: Informar total correspondente ao filtro aplicado
+### CT 34: Informar total correspondente ao filtro aplicado
 
 | | |
 |---|---|
@@ -838,13 +793,13 @@
 
 **Resultado esperado:** o total deve refletir o filtro: cinco para São Paulo e nove para `EM_TRANSITO` na massa inicial.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A busca por `São Paulo` retornou cinco itens, mas informou `total=42`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-08-total-nao-respeita-filtros.md`.
 
-### CT 37: Retornar exatamente o limite solicitado por página
+### CT 35: Retornar exatamente o limite solicitado por página
 
 | | |
 |---|---|
@@ -862,13 +817,13 @@
 
 **Resultado esperado:** cada página não final deve ter exatamente dez itens.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Com `limit=10`, a primeira página retornou nove itens.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-09-paginacao-retorna-item-a-menos.md`.
 
-### CT 38: Validar a última página e uma página sem resultado
+### CT 36: Validar a última página e uma página sem resultado
 
 | | |
 |---|---|
@@ -886,13 +841,13 @@
 
 **Resultado esperado:** a última página deve mostrar apenas o restante da lista. A página posterior não deve repetir itens nem apresentar registros indevidos.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A página 4 retornou nove itens e a página 5 retornou lista vazia, conforme esperado para a massa consultada.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
-### CT 39: Testar limites diferentes de paginação
+### CT 37: Testar limites diferentes de paginação
 
 | | |
 |---|---|
@@ -909,15 +864,15 @@
 
 **Resultado esperado:** a primeira consulta deve retornar um item. A segunda deve retornar todas as entregas elegíveis para a listagem padrão, sem canceladas.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Com `limit=1`, a API retornou zero itens; com `limit=100`, retornou 39 itens.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-09-paginacao-retorna-item-a-menos.md`.
 
 ## 5. Transportadoras
 
-### CT 40: Listar somente transportadoras ativas por padrão
+### CT 38: Listar somente transportadoras ativas por padrão
 
 | | |
 |---|---|
@@ -934,13 +889,13 @@
 
 **Resultado esperado:** apenas as quatro ativas devem ser retornadas e exibidas para cadastro.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A consulta padrão retornou quatro transportadoras, todas ativas.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
-### CT 41: Incluir transportadoras inativas quando solicitado e preservar CNPJ sem máscara
+### CT 39: Incluir transportadoras inativas quando solicitado e preservar CNPJ sem máscara
 
 | | |
 |---|---|
@@ -957,15 +912,15 @@
 
 **Resultado esperado:** cinco transportadoras, incluindo a inativa; CNPJ armazenado e exibido apenas com dígitos, sem máscara.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** Com `incluir_inativas=true`, a consulta retornou cinco transportadoras, incluindo a inativa; os CNPJs vieram com 14 dígitos e sem máscara.
 
-**Status:** Não executado
+**Status:** Passou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** Não há.
 
 ## 6. Contrato da API
 
-### CT 42: Retornar `404` ao consultar entrega inexistente
+### CT 40: Retornar `404` ao consultar entrega inexistente
 
 | | |
 |---|---|
@@ -981,8 +936,58 @@
 
 **Resultado esperado:** resposta `404` no formato `{ "erro": "..." }`.
 
-**Resultado obtido:** A executar.
+**Resultado obtido:** A consulta de uma entrega inexistente retornou `200` com corpo `{}`.
 
-**Status:** Não executado
+**Status:** Falhou
 
-**Bug relacionado:** A preencher caso o cenário falhe.
+**Bug relacionado:** `bugs/BUG-10-consulta-inexistente-retorna-200.md`.
+
+## 7. Validações complementares do cadastro
+
+### CT 41: Identificar os campos obrigatórios no cadastro
+
+| | |
+|---|---|
+| **Funcionalidade** | Cadastro de entrega |
+| **Prioridade** | Média |
+| **Tipo** | Usabilidade / negativo |
+| **Camada** | UI |
+
+**Pré-condição:** aplicação disponível; formulário **Nova entrega** aberto.
+
+**Passos:**
+1. Conferir os rótulos de destinatário, cidade, UF, transportadora, peso e volumes.
+2. Comparar os campos com a lista de obrigatoriedade do README.
+3. Inspecionar se os controles possuem `required` ou `aria-required`.
+
+**Resultado esperado:** os seis campos obrigatórios devem ser identificados na tela, com `*` no rótulo e marcação de obrigatoriedade no controle. `data_coleta` não deve ser marcada, pois é opcional.
+
+**Resultado obtido:** nenhum dos seis campos possui `*`, `required` ou `aria-required`. A tela não informa previamente quais dados precisam ser preenchidos.
+
+**Status:** Falhou
+
+**Bug relacionado:** `bugs/BUG-11-indicacao-de-campos-obrigatorios.md`.
+
+### CT 42: Rejeitar data de coleta inválida
+
+| | |
+|---|---|
+| **Funcionalidade** | Cadastro e data de coleta |
+| **Prioridade** | Alta |
+| **Tipo** | Negativo / limite de data |
+| **Camada** | API |
+
+**Pré-condição:** dados resetados; transportadora ativa disponível.
+
+**Passos:**
+1. Enviar cadastro válido com `data_coleta: "data inválida"`.
+2. Resetar e repetir com `data_coleta: "2026-02-30"`.
+3. Resetar e repetir com `data_coleta: "2026-13-01"`.
+
+**Resultado esperado:** as três tentativas devem retornar `422`, informar que a data é inválida e não criar entrega.
+
+**Resultado obtido:** A API retornou `500` para data textual e mês inválido. A data impossível `2026-02-30` retornou `201` e prazo `2026-03-05`.
+
+**Status:** Falhou
+
+**Bug relacionado:** `bugs/BUG-12-validacao-da-data-de-coleta.md`.
