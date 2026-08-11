@@ -36,7 +36,7 @@ id=4 | status=ENTREGUE | histórico=CRIADA
 
 ## Cobertura automatizada
 
-O cenário [fluxo-status-adicional.cy.js](../automacao/cypress/e2e/fluxo-status-adicional.cy.js) abre a entrega 4 pela tela e confere se o histórico apresenta o status `ENTREGUE`.
+O cenário [status.cy.js](../automacao/cypress/e2e/status.cy.js) abre a entrega 4 pela tela e confere se o histórico apresenta o status `ENTREGUE`.
 
 ## Observações
 

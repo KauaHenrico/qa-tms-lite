@@ -33,7 +33,7 @@ Prazo esperado: 2026-06-09
 
 ## Cobertura automatizada
 
-O cenário [prazo-variacoes.cy.js](../automacao/cypress/e2e/prazo-variacoes.cy.js) abre uma entrega da massa inicial pela tela e confere o prazo contra o prazo contratado da transportadora.
+O cenário [prazo.cy.js](../automacao/cypress/e2e/prazo.cy.js) abre uma entrega da massa inicial pela tela e confere o prazo contra o prazo contratado da transportadora.
 
 ## Observações
 

@@ -77,3 +77,17 @@ describe('Busca, filtros e paginação pela tela', () => {
     cy.get('#tabela tr[data-id]').should('have.length.at.least', 1);
   });
 });
+
+describe('Contador após filtro de status', () => {
+  beforeEach(() => {
+    abrirTelaComDadosIniciais();
+  });
+
+  it('mostra no contador somente as entregas em trânsito', () => {
+    filtrarPorStatus('EM_TRANSITO');
+
+    cy.get('#tabela tr[data-id]').should('have.length.at.least', 1).then(($linhas) => {
+      cy.get('#contador').should('have.text', `${$linhas.length} entregas`);
+    });
+  });
+});

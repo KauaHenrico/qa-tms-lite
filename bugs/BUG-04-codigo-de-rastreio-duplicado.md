@@ -34,7 +34,7 @@ requisição 8: HTTP 201 | id=50 | codigo=BRD-2026-84290
 
 ## Cobertura automatizada
 
-O cenário [rastreio-duplicado-ui.cy.js](../automacao/cypress/e2e/rastreio-duplicado-ui.cy.js) preenche o formulário e faz dois cliques rápidos em **Cadastrar entrega**. As duas respostas recebem o mesmo código.
+O cenário [rastreio.cy.js](../automacao/cypress/e2e/rastreio.cy.js) preenche o formulário e faz dois cliques rápidos em **Cadastrar entrega**. As duas respostas recebem o mesmo código.
 
 ## Observações
 

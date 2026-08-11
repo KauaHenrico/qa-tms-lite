@@ -43,3 +43,23 @@ describe('Variações do cálculo de prazo pela tela', () => {
     cy.get('#detalhe').should('contain.text', 'Prazo: 2026-06-10');
   });
 });
+
+describe('Cálculo de prazo a partir de uma quinta-feira', () => {
+  beforeEach(() => {
+    abrirTelaComDadosIniciais();
+  });
+
+  it('mostra prazo calculado somente com dias úteis após o cadastro', () => {
+    cy.intercept('POST', '/api/entregas').as('criarEntrega');
+    preencherFormulario({ destinatario_nome: 'Cliente prazo útil', data_coleta: '2026-07-02' });
+    enviarFormulario();
+    cy.wait('@criarEntrega');
+
+    cy.get('#mensagem-form').should('have.class', 'sucesso').invoke('text').then((mensagem) => {
+      const codigo = mensagem.match(/BRD-2026-\d{5}/)[0];
+      buscar(codigo);
+      cy.get('#tabela tr[data-id]').should('have.length', 1).click();
+      cy.get('#detalhe').should('contain.text', 'Prazo: 2026-07-07');
+    });
+  });
+});

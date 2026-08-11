@@ -37,7 +37,7 @@ HTTP 201 | data_prazo=2026-07-08 | esperado=2026-07-08
 
 ## Cobertura automatizada
 
-Os cenários [prazo-entrega.cy.js](../automacao/cypress/e2e/prazo-entrega.cy.js) e [prazo-variacoes.cy.js](../automacao/cypress/e2e/prazo-variacoes.cy.js) cadastram entregas pela tela e conferem o prazo exibido para coleta em quinta, sexta e sábado.
+O cenário [prazo.cy.js](../automacao/cypress/e2e/prazo.cy.js) cadastra entregas pela tela e confere o prazo exibido para coleta em quinta, sexta e sábado.
 
 ## Observações
 

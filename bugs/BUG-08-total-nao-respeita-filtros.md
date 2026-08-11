@@ -45,7 +45,7 @@ HTTP 200 | total=42 | itens=5
 
 ## Cobertura automatizada
 
-Os cenários [listagem-entregas.cy.js](../automacao/cypress/e2e/listagem-entregas.cy.js) e [busca-listagem.cy.js](../automacao/cypress/e2e/busca-listagem.cy.js) filtram e buscam pela tela, comparando o contador mostrado com as linhas exibidas.
+O cenário [listagem.cy.js](../automacao/cypress/e2e/listagem.cy.js) filtra e busca pela tela, comparando o contador mostrado com as linhas exibidas.
 
 ## Observações
 

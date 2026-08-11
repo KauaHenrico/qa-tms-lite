@@ -67,3 +67,19 @@ describe('Caminhos adicionais do fluxo de status', () => {
     cy.get('.historico').should('contain.text', 'ENTREGUE');
   });
 });
+
+describe('Bloqueio de salto no fluxo de status', () => {
+  beforeEach(() => {
+    abrirTelaComDadosIniciais();
+  });
+
+  it('impede selecionar ENTREGUE para uma entrega em CRIADA', () => {
+    abrirEntrega(5);
+    cy.get('#novo-status').should('have.value', 'CRIADA');
+    alterarStatus('ENTREGUE');
+
+    cy.get('#mensagem-status').should('contain.text', 'não permitida');
+    cy.get('#novo-status').should('have.value', 'CRIADA');
+    cy.get('.historico li').should('have.length', 1);
+  });
+});

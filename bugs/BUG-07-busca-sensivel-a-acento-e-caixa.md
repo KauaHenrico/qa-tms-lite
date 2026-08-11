@@ -32,7 +32,7 @@ HTTP 200
 
 ## Cobertura automatizada
 
-O cenário [busca-listagem.cy.js](../automacao/cypress/e2e/busca-listagem.cy.js) digita `cliente 5` e `Sao Paulo` no campo de busca da tela e confirma que nenhuma entrega é encontrada.
+O cenário [listagem.cy.js](../automacao/cypress/e2e/listagem.cy.js) digita `cliente 5` e `Sao Paulo` no campo de busca da tela e confirma que nenhuma entrega é encontrada.
 
 ## Observações
 

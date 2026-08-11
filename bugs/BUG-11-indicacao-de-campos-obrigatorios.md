@@ -32,7 +32,7 @@ volumes           | required=false | aria-required=null
 
 ## Cobertura automatizada
 
-O cenário [campos-obrigatorios.cy.js](../automacao/cypress/e2e/campos-obrigatorios.cy.js) inspeciona individualmente os seis controles obrigatórios da tela.
+O cenário [cadastro.cy.js](../automacao/cypress/e2e/cadastro.cy.js) inspeciona individualmente os seis controles obrigatórios da tela.
 
 ## Observações
 

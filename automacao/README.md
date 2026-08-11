@@ -46,7 +46,7 @@ Para abrir o Cypress de forma visual, inicie a aplicação em um terminal com
 Cada caso restaura os dados iniciais antes de rodar para não depender da ordem
 de execução. Screenshots gerados por falhas ficam fora do versionamento.
 
-A suíte contém 11 arquivos e 44 cenários de interface. Na execução atual,
+A suíte contém seis arquivos organizados por funcionalidade e 44 cenários de interface. Na execução atual,
 14 passam e 30 falham por comportamentos já documentados nos bugs de status,
 cadastro, prazo, rastreio e listagem. O caso de volume fracionado passa porque
 a própria tela impede o envio de número não inteiro. As falhas não são

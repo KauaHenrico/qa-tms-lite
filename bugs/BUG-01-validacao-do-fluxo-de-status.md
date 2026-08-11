@@ -43,7 +43,7 @@ Pela tela, a entrega `BRD-2026-00005` também foi alterada diretamente de `CRIAD
 
 ## Cobertura automatizada
 
-Os cenários [fluxo-status.cy.js](../automacao/cypress/e2e/fluxo-status.cy.js) e [fluxo-status-adicional.cy.js](../automacao/cypress/e2e/fluxo-status-adicional.cy.js) executam essas alterações pela tela e reproduzem o salto de etapa, o cancelamento em trânsito e a mudança de status final.
+O cenário [status.cy.js](../automacao/cypress/e2e/status.cy.js) executa essas alterações pela tela e reproduz o salto de etapa, o cancelamento em trânsito e a mudança de status final.
 
 ## Observações
 

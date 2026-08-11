@@ -74,3 +74,50 @@ describe('Campos do formulário de cadastro', () => {
     });
   });
 });
+
+describe('Validação numérica do cadastro pela tela', () => {
+  beforeEach(() => {
+    abrirTelaComDadosIniciais();
+  });
+
+  it('recusa peso igual a zero ao enviar o formulário', () => {
+    cy.intercept('POST', '/api/entregas').as('criarEntrega');
+    preencherFormulario({ peso_kg: '0' });
+    enviarFormulario();
+    cy.wait('@criarEntrega');
+
+    cy.get('#mensagem-form').should('have.class', 'erro');
+    cy.get('#mensagem-form').should('contain.text', 'peso');
+    cy.get('[name="peso_kg"]').should('have.value', '0');
+  });
+
+  it('bloqueia volume fracionado antes do envio do formulário', () => {
+    preencherFormulario({ volumes: '1.5' });
+    enviarFormulario();
+
+    cy.get('[name="volumes"]').then(($campo) => {
+      expect($campo[0].checkValidity()).to.eq(false);
+    });
+    cy.get('#mensagem-form').should('have.text', '');
+    cy.get('[name="volumes"]').should('have.value', '1.5');
+  });
+});
+
+describe('Indicação dos campos obrigatórios na tela', () => {
+  beforeEach(() => {
+    abrirTelaComDadosIniciais();
+  });
+
+  [
+    ['destinatário', '[name="destinatario_nome"]'],
+    ['cidade', '[name="cidade"]'],
+    ['UF', '[name="uf"]'],
+    ['transportadora', '#select-transportadora'],
+    ['peso', '[name="peso_kg"]'],
+    ['volumes', '[name="volumes"]'],
+  ].forEach(([nome, seletor]) => {
+    it(`identifica ${nome} como obrigatório`, () => {
+      cy.get(seletor).should('have.attr', 'required');
+    });
+  });
+});
