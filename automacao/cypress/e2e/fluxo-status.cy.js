@@ -1,25 +1,28 @@
-describe('Fluxo de status da entrega', () => {
+describe('Fluxo de status pela tela', () => {
   beforeEach(() => {
-    cy.request('POST', '/_reset').its('status').should('eq', 200);
+    cy.intercept('GET', '/api/transportadoras').as('carregarTransportadoras');
+    cy.intercept('GET', '/api/entregas*').as('carregarEntregas');
+    cy.intercept('POST', '/_reset').as('resetarDados');
+
+    cy.visit('/');
+    cy.wait('@carregarTransportadoras');
+    cy.wait('@carregarEntregas');
+    cy.get('#resetar').click();
+    cy.wait('@resetarDados');
+    cy.wait('@carregarEntregas');
   });
 
-  it('recusa o salto de CRIADA para ENTREGUE', () => {
-    cy.request({
-      method: 'PATCH',
-      url: '/api/entregas/5/status',
-      failOnStatusCode: false,
-      body: {
-        status: 'ENTREGUE',
-        descricao: 'Tentativa de finalizar sem as etapas anteriores',
-      },
-    }).then((resposta) => {
-      expect(resposta.status).to.eq(422);
-      expect(resposta.body.erro).to.match(/transi[çc][ãa]o|permitida/i);
-    });
+  it('impede selecionar ENTREGUE para uma entrega em CRIADA', () => {
+    cy.intercept('GET', '/api/entregas/5').as('detalharEntrega');
+    cy.intercept('PATCH', '/api/entregas/5/status').as('alterarStatus');
 
-    cy.request('/api/entregas/5').then((resposta) => {
-      expect(resposta.body.status).to.eq('CRIADA');
-      expect(resposta.body.historico).to.have.length(1);
-    });
+    cy.get('tr[data-id="5"]').click();
+    cy.wait('@detalharEntrega');
+    cy.get('#novo-status').should('have.value', 'CRIADA').select('ENTREGUE');
+    cy.wait('@alterarStatus');
+
+    cy.get('#mensagem-status').should('contain.text', 'não permitida');
+    cy.get('#novo-status').should('have.value', 'CRIADA');
+    cy.get('.historico li').should('have.length', 1);
   });
 });

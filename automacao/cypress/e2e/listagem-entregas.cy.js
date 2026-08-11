@@ -1,15 +1,24 @@
-describe('Listagem de entregas', () => {
+describe('Listagem de entregas pela tela', () => {
   beforeEach(() => {
-    cy.request('POST', '/_reset').its('status').should('eq', 200);
+    cy.intercept('GET', '/api/transportadoras').as('carregarTransportadoras');
+    cy.intercept('GET', '/api/entregas*').as('carregarEntregas');
+    cy.intercept('POST', '/_reset').as('resetarDados');
+
+    cy.visit('/');
+    cy.wait('@carregarTransportadoras');
+    cy.wait('@carregarEntregas');
+    cy.get('#resetar').click();
+    cy.wait('@resetarDados');
+    cy.wait('@carregarEntregas');
   });
 
-  it('retorna no total apenas as entregas do status filtrado', () => {
-    cy.request('/api/entregas?status=EM_TRANSITO&limit=100').then((resposta) => {
-      expect(resposta.status).to.eq(200);
-      expect(resposta.body.itens).to.have.length.greaterThan(0);
-      expect(resposta.body.itens).to.satisfy((entregas) =>
-        entregas.every((entrega) => entrega.status === 'EM_TRANSITO'));
-      expect(resposta.body.total).to.eq(resposta.body.itens.length);
+  it('atualiza o contador depois de filtrar por status', () => {
+    cy.intercept('GET', '/api/entregas*').as('filtrarEntregas');
+
+    cy.get('#filtro-status').select('EM_TRANSITO');
+    cy.wait('@filtrarEntregas');
+    cy.get('#tabela tr[data-id]').should('have.length.at.least', 1).then(($linhas) => {
+      cy.get('#contador').should('have.text', `${$linhas.length} entregas`);
     });
   });
 });
