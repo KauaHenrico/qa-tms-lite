@@ -30,6 +30,10 @@ HTTP 200
 {"total":42,"itens":[]}
 ```
 
+## Cobertura automatizada
+
+O cenário [busca-listagem.cy.js](../automacao/cypress/e2e/busca-listagem.cy.js) digita `cliente 5` e `Sao Paulo` no campo de busca da tela e confirma que nenhuma entrega é encontrada.
+
 ## Observações
 
 A regra documentada exige que a busca ignore acentuação e diferença entre maiúsculas e minúsculas.

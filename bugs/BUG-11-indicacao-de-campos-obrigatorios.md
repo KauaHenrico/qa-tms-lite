@@ -30,6 +30,10 @@ peso_kg           | required=false | aria-required=null
 volumes           | required=false | aria-required=null
 ```
 
+## Cobertura automatizada
+
+O cenário [campos-obrigatorios.cy.js](../automacao/cypress/e2e/campos-obrigatorios.cy.js) inspeciona individualmente os seis controles obrigatórios da tela.
+
 ## Observações
 
 `data_coleta` é opcional segundo o README e, por isso, não deve receber marcação de campo obrigatório.

@@ -34,6 +34,10 @@ id=3 | status=SAIU_ENTREGA | histórico=CRIADA
 id=4 | status=ENTREGUE | histórico=CRIADA
 ```
 
+## Cobertura automatizada
+
+O cenário [fluxo-status-adicional.cy.js](../automacao/cypress/e2e/fluxo-status-adicional.cy.js) abre a entrega 4 pela tela e confere se o histórico apresenta o status `ENTREGUE`.
+
 ## Observações
 
 O problema está na massa inicial, não em um destinatário específico. A operação não consegue confirmar como 34 entregas chegaram ao status atual. É necessário corrigir ou carregar o histórico correspondente para todos esses registros.

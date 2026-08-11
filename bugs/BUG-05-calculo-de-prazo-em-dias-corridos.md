@@ -35,6 +35,10 @@ POST /api/entregas | coleta=2026-07-05 | prazo_dias=3
 HTTP 201 | data_prazo=2026-07-08 | esperado=2026-07-08
 ```
 
+## Cobertura automatizada
+
+Os cenários [prazo-entrega.cy.js](../automacao/cypress/e2e/prazo-entrega.cy.js) e [prazo-variacoes.cy.js](../automacao/cypress/e2e/prazo-variacoes.cy.js) cadastram entregas pela tela e conferem o prazo exibido para coleta em quinta, sexta e sábado.
+
 ## Observações
 
 O prazo exibido pode ficar antes da data prometida pela transportadora, o que leva o atendimento a informar uma previsão incorreta ao cliente.

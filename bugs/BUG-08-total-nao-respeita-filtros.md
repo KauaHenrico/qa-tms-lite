@@ -43,6 +43,10 @@ GET /api/entregas?q=S%C3%A3o%20Paulo&limit=100
 HTTP 200 | total=42 | itens=5
 ```
 
+## Cobertura automatizada
+
+Os cenários [listagem-entregas.cy.js](../automacao/cypress/e2e/listagem-entregas.cy.js) e [busca-listagem.cy.js](../automacao/cypress/e2e/busca-listagem.cy.js) filtram e buscam pela tela, comparando o contador mostrado com as linhas exibidas.
+
 ## Observações
 
 O contador exibido na tela pode induzir a operação a acreditar que a quantidade filtrada é maior do que a lista apresentada.

@@ -31,6 +31,10 @@ volume abc: HTTP 201; peso ausente: HTTP 201; volumes ausentes: HTTP 201
 
 Pela tela, peso `0` retornou mensagem de sucesso e limpou os campos do formulário.
 
+## Cobertura automatizada
+
+Os cenários [cadastro-entrega.cy.js](../automacao/cypress/e2e/cadastro-entrega.cy.js) e [cadastro-campos.cy.js](../automacao/cypress/e2e/cadastro-campos.cy.js) preenchem o formulário, clicam em **Cadastrar entrega** e reproduzem os casos de espaços, pesos inválidos, volumes zero ou negativos, campos numéricos vazios e limpeza indevida dos valores. O navegador bloqueia volume fracionário na tela; a aceitação desse valor pela API permanece registrada na evidência manual acima.
+
 ## Observações
 
 O sistema passa a armazenar cargas impossíveis ou incompletas. Isso afeta cálculo operacional, expedição e atendimento. A falha da tela decorre da mesma validação ausente no cadastro.

@@ -31,6 +31,10 @@ GET /api/entregas?limit=100&page=1
 HTTP 200 | total=42 | itens=39
 ```
 
+## Cobertura automatizada
+
+O cenário [busca-listagem.cy.js](../automacao/cypress/e2e/busca-listagem.cy.js) confere a primeira página da tela e encontra nove linhas quando deveria haver dez.
+
 ## Observações
 
 Itens intermediários deixam de aparecer durante a navegação entre páginas.

@@ -31,6 +31,10 @@ Transportadora 2: prazo_dias=5
 Prazo esperado: 2026-06-09
 ```
 
+## Cobertura automatizada
+
+O cenário [prazo-variacoes.cy.js](../automacao/cypress/e2e/prazo-variacoes.cy.js) abre uma entrega da massa inicial pela tela e confere o prazo contra o prazo contratado da transportadora.
+
 ## Observações
 
 Mesmo sem criar novas entregas, a tela já apresenta prazo incorreto para registros existentes.

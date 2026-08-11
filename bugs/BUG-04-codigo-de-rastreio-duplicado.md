@@ -32,6 +32,10 @@ requisição 7: HTTP 201 | id=49 | codigo=BRD-2026-84290
 requisição 8: HTTP 201 | id=50 | codigo=BRD-2026-84290
 ```
 
+## Cobertura automatizada
+
+O cenário [rastreio-duplicado-ui.cy.js](../automacao/cypress/e2e/rastreio-duplicado-ui.cy.js) preenche o formulário e faz dois cliques rápidos em **Cadastrar entrega**. As duas respostas recebem o mesmo código.
+
 ## Observações
 
 O código é o identificador usado pelo cliente para rastrear a carga. A duplicidade pode levar uma consulta a apontar para a entrega errada.
