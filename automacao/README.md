@@ -32,6 +32,7 @@ Para abrir o Cypress de forma visual, inicie a aplicação em um terminal com
 |---|---|---|---|
 | 1 | Impedir salto de `CRIADA` para `ENTREGUE` | Uma entrega pode ser concluída sem coleta, trânsito ou saída para entrega | É o risco operacional mais grave relatado: o status pode induzir atendimento e expedição a tomarem decisões erradas. |
 | 2 | Recusar peso zero e volume fracionado no cadastro | Dados fisicamente inválidos entram na operação e comprometem expedição e cálculo de carga | O cadastro é a porta de entrada da operação; valores inválidos contaminam as informações posteriores. |
+| 3 | Calcular o prazo apenas em dias úteis | O atendimento informa ao cliente uma data menor que o prazo contratado | É uma falha relatada pela Operação e afeta diretamente a promessa feita ao cliente. |
 
 ## Observações
 
