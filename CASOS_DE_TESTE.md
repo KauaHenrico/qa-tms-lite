@@ -1,5 +1,14 @@
 # Casos de teste: TMS Lite
 
+## Preparação para reproduzir os casos
+
+1. No terminal, na raiz do projeto, executar `npm start`.
+2. Aguardar a mensagem `TMS Lite rodando em http://localhost:3000`.
+3. Para casos de tela, abrir `http://localhost:3000` no Brave ou em seu navegador de preferência.
+4. Antes de cada caso, clicar em **Resetar dados** ou enviar `POST http://localhost:3000/_reset`.
+5. Para os casos de API, considerar `http://localhost:3000` como base e enviar as requisições com um cliente REST. Os corpos JSON informados nos passos devem ser enviados com o cabeçalho `Content-Type: application/json`.
+6. Quando o passo pedir uma consulta, conferir tanto o status HTTP quanto o corpo retornado. Quando pedir uma verificação na tela, aguardar a tabela ou o detalhe ser atualizado antes de seguir.
+
 ## 1. Fluxo de status e histórico
 
 ### CT 01: Concluir a sequência válida até entregue
@@ -14,11 +23,12 @@
 **Pré condição:** dados resetados; entrega `id=5` em `CRIADA`.
 
 **Passos:**
-1. Alterar o status para `COLETADA`.
-2. Alterar para `EM_TRANSITO`.
-3. Alterar para `SAIU_ENTREGA`.
-4. Alterar para `ENTREGUE`.
-5. Conferir o histórico.
+1. Restaurar os dados e confirmar, em `GET /api/entregas/5`, que a entrega está em `CRIADA`.
+2. Enviar `PATCH /api/entregas/5/status` com `{"status":"COLETADA","descricao":"Coleta confirmada"}`.
+3. Enviar `PATCH /api/entregas/5/status` com `{"status":"EM_TRANSITO","descricao":"Carga em trânsito"}`.
+4. Enviar `PATCH /api/entregas/5/status` com `{"status":"SAIU_ENTREGA","descricao":"Saiu para entrega"}`.
+5. Enviar `PATCH /api/entregas/5/status` com `{"status":"ENTREGUE","descricao":"Entrega concluída"}`.
+6. Consultar `GET /api/entregas/5` e contar os itens de `historico`.
 
 **Resultado esperado:** cada alteração deve retornar `200`. O histórico deve registrar as cinco etapas, incluindo o cadastro inicial.
 
@@ -40,11 +50,12 @@
 **Pré condição:** dados resetados; entrega `id=5` em `CRIADA`.
 
 **Passos:**
-1. Alterar o status para `COLETADA`.
-2. Alterar para `EM_TRANSITO`.
-3. Alterar para `SAIU_ENTREGA`.
-4. Alterar para `DEVOLVIDA`.
-5. Conferir o histórico.
+1. Restaurar os dados e confirmar, em `GET /api/entregas/5`, que a entrega está em `CRIADA`.
+2. Enviar `PATCH /api/entregas/5/status` com `{"status":"COLETADA","descricao":"Coleta confirmada"}`.
+3. Enviar `PATCH /api/entregas/5/status` com `{"status":"EM_TRANSITO","descricao":"Carga em trânsito"}`.
+4. Enviar `PATCH /api/entregas/5/status` com `{"status":"SAIU_ENTREGA","descricao":"Saiu para entrega"}`.
+5. Enviar `PATCH /api/entregas/5/status` com `{"status":"DEVOLVIDA","descricao":"Devolução solicitada"}`.
+6. Consultar `GET /api/entregas/5` e conferir o status final e todos os itens de `historico`.
 
 **Resultado esperado:** cada alteração deve retornar `200`. A etapa final deve ser `DEVOLVIDA` e o histórico deve registrar todo o caminho.
 
@@ -66,8 +77,9 @@
 **Pré-condição:** dados resetados; entrega `id=5` em `CRIADA`.
 
 **Passos:**
-1. Enviar `PATCH /api/entregas/5/status` com corpo `{"status":"COLETADA","descricao":"Coletado na origem"}`.
-2. Consultar a entrega retornada.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `PATCH /api/entregas/5/status` com corpo `{"status":"COLETADA","descricao":"Coletado na origem"}`.
+3. Consultar `GET /api/entregas/5` e conferir o status e o último item de `historico`.
 
 **Resultado esperado:** resposta `200`, status `COLETADA` e novo item no histórico com o status, a data e a descrição informada.
 
@@ -89,7 +101,9 @@
 **Pré-condição:** dados resetados; entrega `id=5` em `CRIADA`.
 
 **Passos:**
-1. Enviar `PATCH /api/entregas/5/status` com `{"status":"CANCELADA"}`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `PATCH /api/entregas/5/status` com `{"status":"CANCELADA","descricao":"Cancelamento solicitado"}`.
+3. Consultar `GET /api/entregas/5` e conferir o status e o último item de `historico`.
 
 **Resultado esperado:** resposta `200`, status `CANCELADA` e registro no histórico.
 
@@ -111,8 +125,10 @@
 **Pré-condição:** dados resetados; entrega `id=5` em `CRIADA`.
 
 **Passos:**
-1. Alterar a entrega `5` para `COLETADA`.
-2. Alterar a mesma entrega para `CANCELADA`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `PATCH /api/entregas/5/status` com `{"status":"COLETADA","descricao":"Coleta confirmada"}`.
+3. Enviar `PATCH /api/entregas/5/status` com `{"status":"CANCELADA","descricao":"Cancelamento solicitado"}`.
+4. Consultar `GET /api/entregas/5` e conferir o histórico.
 
 **Resultado esperado:** ambas as alterações devem retornar `200`; o cancelamento é permitido até `COLETADA`.
 
@@ -134,8 +150,9 @@
 **Pré-condição:** dados resetados; entrega `id=5` em `CRIADA`.
 
 **Passos:**
-1. Enviar `PATCH /api/entregas/5/status` com corpo `{"status":"ENTREGUE","descricao":"Teste QA"}`.
-2. Consultar a entrega e seu histórico.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `PATCH /api/entregas/5/status` com corpo `{"status":"ENTREGUE","descricao":"Teste de salto de status"}`.
+3. Consultar `GET /api/entregas/5` e comparar `status` e `historico` com o estado anterior à requisição.
 
 **Resultado esperado:** resposta `422`; a entrega deve permanecer em `CRIADA` e o histórico não pode ser alterado, pois não é permitido pular etapas.
 
@@ -157,7 +174,10 @@
 **Pré-condição:** dados resetados; entrega `id=2` em `EM_TRANSITO`.
 
 **Passos:**
-1. Enviar `PATCH /api/entregas/2/status` com `{"status":"CANCELADA","descricao":"Teste QA"}`.
+1. Restaurar os dados com `POST /_reset`.
+2. Consultar `GET /api/entregas/2` e confirmar `status: "EM_TRANSITO"`.
+3. Enviar `PATCH /api/entregas/2/status` com `{"status":"CANCELADA","descricao":"Teste de cancelamento após trânsito"}`.
+4. Consultar novamente `GET /api/entregas/2` e conferir se houve mudança no status ou no histórico.
 
 **Resultado esperado:** resposta `422`; a entrega deve continuar em `EM_TRANSITO` e não deve ganhar histórico de cancelamento.
 
@@ -179,7 +199,10 @@
 **Pré-condição:** dados resetados; entrega `id=4` em `ENTREGUE`.
 
 **Passos:**
-1. Enviar `PATCH /api/entregas/4/status` com `{"status":"COLETADA","descricao":"Teste QA"}`.
+1. Restaurar os dados com `POST /_reset`.
+2. Consultar `GET /api/entregas/4` e confirmar `status: "ENTREGUE"`.
+3. Enviar `PATCH /api/entregas/4/status` com `{"status":"COLETADA","descricao":"Teste de status final"}`.
+4. Consultar novamente `GET /api/entregas/4` e conferir se houve mudança no status ou no histórico.
 
 **Resultado esperado:** resposta `422`; `ENTREGUE` é status final e a entrega não pode mudar.
 
@@ -201,7 +224,9 @@
 **Pré-condição:** dados resetados; entrega `id=5` existente.
 
 **Passos:**
-1. Enviar `PATCH /api/entregas/5/status` com `{"status":"INVALIDO"}`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `PATCH /api/entregas/5/status` com `{"status":"INVALIDO","descricao":"Status fora do catálogo"}`.
+3. Consultar `GET /api/entregas/5` e confirmar que ela continua em `CRIADA`.
 
 **Resultado esperado:** resposta `422` com erro indicando status inválido; a entrega não é alterada.
 
@@ -223,9 +248,11 @@
 **Pré-condição:** dados resetados; massa inicial carregada.
 
 **Passos:**
-1. Consultar as entregas iniciais de `id=1` a `id=42`.
-2. Selecionar as entregas com status diferente de `CRIADA`.
-3. Conferir o status e os itens de `historico` de cada uma.
+1. Restaurar os dados com `POST /_reset`.
+2. Consultar `GET /api/entregas?limit=100&incluir_canceladas=true` para obter toda a massa inicial.
+3. Separar os registros cujo `status` é diferente de `CRIADA`.
+4. Para cada registro separado, consultar `GET /api/entregas/{id}` e comparar o status atual com os itens de `historico`.
+5. Registrar a quantidade de entregas fora de `CRIADA` e quantas delas possuem somente o evento `CRIADA` no histórico.
 
 **Resultado esperado:** cada entrega em status posterior a `CRIADA` deve conter os registros das mudanças aceitas que a levaram ao estado atual, permitindo rastrear coleta, trânsito e saída para entrega.
 
@@ -247,9 +274,10 @@
 **Pré-condição:** dados resetados; entrega `BRD-2026-00005` em `CRIADA`.
 
 **Passos:**
-1. Abrir a entrega `BRD-2026-00005` na tabela.
-2. Selecionar `ENTREGUE` no campo **Alterar status**.
-3. Conferir o status e o histórico apresentados no detalhe.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. Na tabela, clicar na linha de código `BRD-2026-00005`.
+3. Na seção **Detalhe**, abrir o campo **Alterar status** e selecionar `ENTREGUE`.
+4. Conferir o status exibido no detalhe e o último item da seção **Histórico**.
 
 **Resultado esperado:** a tela deve informar que a transição não é permitida; o status deve permanecer `CRIADA`.
 
@@ -273,8 +301,11 @@
 **Pré-condição:** dados resetados; transportadora `id=1` ativa.
 
 **Passos:**
-1. Preencher destinatário, cidade, UF, peso `1`, volumes `1`, transportadora `1` e uma data de coleta válida.
-2. Cadastrar a entrega.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. No formulário **Nova entrega**, preencher **Destinatário** com `Maria Souza`, **Cidade** com `Curitiba`, **UF** com `PR`, **Peso (kg)** com `1`, **Volumes** com `1` e **Data de coleta** com `2026-07-02`.
+3. Selecionar `Trans Sul Logística` no campo **Transportadora**.
+4. Clicar em **Cadastrar entrega**.
+5. Conferir a mensagem da tela e localizar a entrega criada na tabela ou na resposta de `POST /api/entregas`.
 
 **Resultado esperado:** resposta `201`; entrega criada em `CRIADA`, com código de rastreio e histórico inicial.
 
@@ -296,7 +327,13 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Enviar tentativas separadas com todos os campos válidos, deixando vazio `id_transportadora`, `destinatario_nome`, `cidade` e `uf`.
+1. Restaurar os dados com `POST /_reset`.
+2. Usar como corpo base `{"id_transportadora":1,"destinatario_nome":"Teste obrigatório","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":1,"data_coleta":"2026-07-02"}`.
+3. Enviar `POST /api/entregas` sem `id_transportadora`.
+4. Restaurar os dados e enviar a mesma requisição sem `destinatario_nome`.
+5. Restaurar os dados e enviar a mesma requisição sem `cidade`.
+6. Restaurar os dados e enviar a mesma requisição sem `uf`.
+7. Após cada tentativa, consultar `GET /api/entregas?limit=100` e confirmar que não houve nova entrega.
 
 **Resultado esperado:** resposta `422`, mensagem que identifique o campo e nenhuma entrega criada.
 
@@ -318,9 +355,10 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Preencher destinatário, cidade e UF com espaços em branco.
-2. Informar transportadora ativa, peso `1` e volumes `1`.
-3. Cadastrar.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"   ","cidade":"   ","uf":"  ","peso_kg":1,"volumes":1,"data_coleta":"2026-07-02"}`.
+3. Conferir o status HTTP, a resposta e a quantidade de entregas antes e depois do envio.
+4. Repetir pela tela: preencher os três campos textuais somente com espaços, selecionar `Trans Sul Logística`, informar peso `1`, volumes `1`, data `2026-07-02` e clicar em **Cadastrar entrega**.
 
 **Resultado esperado:** resposta `422`; campos textuais em branco ou somente espaços não são válidos.
 
@@ -342,7 +380,9 @@
 **Pré-condição:** dados resetados; transportadora `id=5` inativa.
 
 **Passos:**
-1. Enviar cadastro válido usando `id_transportadora: 5`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":5,"destinatario_nome":"Teste transportadora inativa","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":1,"data_coleta":"2026-07-02"}`.
+3. Conferir o status HTTP e a mensagem retornada.
 
 **Resultado esperado:** resposta `422` indicando que a transportadora está inativa; nenhuma entrega é criada.
 
@@ -364,7 +404,9 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Enviar cadastro válido usando `id_transportadora: 999`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":999,"destinatario_nome":"Teste transportadora inexistente","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":1,"data_coleta":"2026-07-02"}`.
+3. Conferir o status HTTP e confirmar que nenhuma entrega foi criada.
 
 **Resultado esperado:** resposta `404` e nenhuma entrega criada.
 
@@ -386,9 +428,10 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Tentar cadastrar uma entrega válida, exceto por `peso_kg: 0`.
-2. Resetar os dados.
-3. Repetir com `peso_kg: -1`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"Teste peso zero","cidade":"Curitiba","uf":"PR","peso_kg":0,"volumes":1,"data_coleta":"2026-07-02"}`.
+3. Restaurar os dados e repetir a requisição com `peso_kg:-1` e `destinatario_nome:"Teste peso negativo"`.
+4. Conferir o status HTTP das duas tentativas e a quantidade de entregas criada.
 
 **Resultado esperado:** ambos os cadastros devem retornar `422`, pois o peso precisa ser maior que zero.
 
@@ -410,9 +453,11 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Tentar cadastrar uma entrega com `volumes: 0`.
-2. Resetar e repetir com `volumes: -1`.
-3. Resetar e repetir com `volumes: 1.5`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"Teste volume zero","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":0,"data_coleta":"2026-07-02"}`.
+3. Restaurar os dados e repetir com `volumes:-1` e `destinatario_nome:"Teste volume negativo"`.
+4. Restaurar os dados e repetir com `volumes:1.5` e `destinatario_nome:"Teste volume fracionado"`.
+5. Conferir o status HTTP e a quantidade de entregas após cada tentativa.
 
 **Resultado esperado:** cada tentativa deve retornar `422`, pois volumes é inteiro e tem mínimo `1`.
 
@@ -434,11 +479,12 @@
 **Pré condição:** dados resetados; transportadora ativa disponível.
 
 **Passos:**
-1. Cadastrar uma entrega com peso `0.01` e volumes `1`.
-2. Tentar cadastrar com volumes `-1`.
-3. Tentar cadastrar com volumes em formato textual, por exemplo `abc`.
-4. Tentar cadastrar sem peso e, em outra tentativa, sem volumes.
-5. Repetir as duas tentativas informando peso e volumes como texto vazio.
+1. Restaurar os dados e enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"Teste peso mínimo","cidade":"Curitiba","uf":"PR","peso_kg":0.01,"volumes":1,"data_coleta":"2026-07-02"}`.
+2. Restaurar os dados e enviar o mesmo corpo com `volumes:-1`.
+3. Restaurar os dados e enviar o mesmo corpo com `volumes:"abc"`.
+4. Restaurar os dados e enviar uma requisição sem `peso_kg`; em outra execução, sem `volumes`.
+5. Restaurar os dados e repetir as duas últimas requisições usando `peso_kg:""` e `volumes:""`.
+6. Anotar o status HTTP e os valores gravados nas respostas aceitas.
 
 **Resultado esperado:** o cadastro com peso `0.01` deve ser aceito. As demais tentativas devem retornar `422` e não criar entrega.
 
@@ -460,8 +506,10 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Enviar oito requisições de cadastro válidas em paralelo, variando apenas o nome do destinatário.
-2. Comparar os códigos retornados.
+1. Restaurar os dados com `POST /_reset`.
+2. Preparar oito corpos válidos, alterando somente `destinatario_nome` para `Concorrência 01` até `Concorrência 08`; manter `id_transportadora:1`, `cidade:"Curitiba"`, `uf:"PR"`, `peso_kg:1`, `volumes:1` e `data_coleta:"2026-07-02"`.
+3. Disparar os oito `POST /api/entregas` sem aguardar uma resposta antes da outra.
+4. Guardar os oito corpos de resposta e comparar os campos `codigo`.
 
 **Resultado esperado:** as oito respostas `201` devem conter códigos distintos no formato `BRD-2026-XXXXX`.
 
@@ -483,9 +531,10 @@
 **Pré condição:** dados resetados; formulário de cadastro aberto.
 
 **Passos:**
-1. Preencher todos os dados válidos, exceto peso `0`.
-2. Enviar o formulário.
-3. Conferir a mensagem apresentada e os valores dos campos.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. No formulário **Nova entrega**, preencher **Destinatário** com `Teste preservação`, **Cidade** com `Curitiba`, **UF** com `PR`, selecionar `Trans Sul Logística`, preencher **Peso (kg)** com `0`, **Volumes** com `1` e **Data de coleta** com `2026-07-02`.
+3. Clicar em **Cadastrar entrega**.
+4. Conferir a mensagem exibida e verificar se cada campo ainda contém o valor informado.
 
 **Resultado esperado:** a tela deve informar que o peso é inválido, não criar a entrega e manter os dados preenchidos para correção.
 
@@ -509,8 +558,10 @@
 **Pré-condição:** dados resetados; transportadora `id=1` com prazo de 3 dias.
 
 **Passos:**
-1. Cadastrar uma entrega com coleta em `2026-07-02` (quinta-feira), peso `1` e volumes `1`.
-2. Conferir `data_prazo` na resposta e na tabela.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"Teste coleta quinta","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":1,"data_coleta":"2026-07-02"}`.
+3. Anotar `data_prazo` da resposta `201`.
+4. Abrir a tela, localizar o código retornado na tabela e conferir a coluna **Prazo**.
 
 **Resultado esperado:** `2026-07-07`; devem ser contados sexta, segunda e terça, sem sábado e domingo.
 
@@ -532,8 +583,10 @@
 **Pré-condição:** dados resetados; entrega `id=1` usa a transportadora `id=2`, de prazo de 5 dias úteis.
 
 **Passos:**
-1. Consultar a entrega `id=1`.
-2. Considerar a coleta `2026-06-02` (terça-feira) e calcular cinco dias úteis: 03, 04, 05, 08 e 09/06.
+1. Restaurar os dados com `POST /_reset`.
+2. Consultar `GET /api/transportadoras` e confirmar que a transportadora `id=2` possui `prazo_dias: 5`.
+3. Consultar `GET /api/entregas/1` e anotar `data_coleta` e `data_prazo`.
+4. Contar manualmente os cinco dias úteis após `2026-06-02`: 03, 04, 05, 08 e 09/06.
 
 **Resultado esperado:** `data_prazo` igual a `2026-06-09`.
 
@@ -555,8 +608,9 @@
 **Pré condição:** dados resetados; transportadora `id=1`, com prazo de três dias úteis.
 
 **Passos:**
-1. Cadastrar uma entrega com data de coleta `2026-07-03`, sexta feira.
-2. Conferir a data de prazo retornada.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"Teste coleta sexta","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":1,"data_coleta":"2026-07-03"}`.
+3. Anotar `data_prazo` na resposta e comparar com `2026-07-08`.
 
 **Resultado esperado:** o prazo deve ser `2026-07-08`, contando segunda, terça e quarta.
 
@@ -578,9 +632,10 @@
 **Pré condição:** dados resetados; transportadora `id=1`, com prazo de três dias úteis.
 
 **Passos:**
-1. Cadastrar uma entrega com coleta em `2026-07-04`, sábado.
-2. Resetar e repetir com coleta em `2026-07-05`, domingo.
-3. Conferir o prazo nas duas respostas.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"Teste coleta sábado","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":1,"data_coleta":"2026-07-04"}` e anotar `data_prazo`.
+3. Restaurar os dados e enviar a mesma requisição trocando `destinatario_nome` para `Teste coleta domingo` e `data_coleta` para `2026-07-05`.
+4. Comparar os dois prazos retornados com `2026-07-08`.
 
 **Resultado esperado:** nas duas situações, o prazo deve ser `2026-07-08`, pois a contagem começa na segunda feira.
 
@@ -604,8 +659,10 @@
 **Pré-condição:** dados resetados; massa contém três entregas canceladas.
 
 **Passos:**
-1. Consultar `GET /api/entregas?limit=100` sem `incluir_canceladas`.
-2. Conferir os status retornados.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/entregas?limit=100` sem o parâmetro `incluir_canceladas`.
+3. Conferir se os 39 itens retornados possuem status diferente de `CANCELADA`.
+4. Na tela, deixar o filtro em **Todos os status**, manter a caixa **incluir canceladas** desmarcada e conferir se não há linha `CANCELADA` na tabela.
 
 **Resultado esperado:** nenhuma entrega `CANCELADA` deve estar nos itens da listagem padrão.
 
@@ -627,8 +684,10 @@
 **Pré-condição:** dados resetados; massa contém três entregas canceladas.
 
 **Passos:**
-1. Consultar `GET /api/entregas?limit=100&incluir_canceladas=true` ou marcar a opção de incluir canceladas na tela.
-2. Conferir os status retornados.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/entregas?limit=100&incluir_canceladas=true`.
+3. Conferir se a resposta possui 42 itens e pelo menos três deles têm `status: "CANCELADA"`.
+4. Na tela, marcar **incluir canceladas** e conferir se as três entregas canceladas aparecem na tabela.
 
 **Resultado esperado:** as entregas canceladas devem aparecer na lista.
 
@@ -650,8 +709,10 @@
 **Pré condição:** dados resetados; entrega `BRD-2026-00008` disponível.
 
 **Passos:**
-1. Pesquisar por `BRD-2026-00008`.
-2. Conferir o resultado mostrado na tabela.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. No campo **Buscar por código, destinatário ou cidade**, digitar `BRD-2026-00008`.
+3. Aguardar a atualização da tabela e conferir que há somente uma linha, com o código `BRD-2026-00008`.
+4. Limpar o campo de busca antes de encerrar o caso.
 
 **Resultado esperado:** a busca deve retornar somente a entrega de código `BRD-2026-00008`.
 
@@ -673,8 +734,10 @@
 **Pré condição:** dados resetados.
 
 **Passos:**
-1. Pesquisar por `Cliente 1`.
-2. Conferir se cada registro retornado possui esse texto no nome do destinatário.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. No campo **Buscar por código, destinatário ou cidade**, digitar `Cliente 1`.
+3. Aguardar a atualização da tabela e conferir, linha a linha, a coluna **Destinatário**.
+4. Confirmar que cada valor retornado contém o texto `Cliente 1`.
 
 **Resultado esperado:** devem aparecer apenas entregas cujo destinatário contém `Cliente 1`.
 
@@ -696,7 +759,10 @@
 **Pré-condição:** dados resetados; cinco entregas de São Paulo na massa inicial.
 
 **Passos:**
-1. Pesquisar por `sao paulo` na caixa de busca ou enviar `GET /api/entregas?q=sao%20paulo`.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. No campo de busca, digitar `São Paulo` e anotar a quantidade de linhas retornadas.
+3. Limpar o campo, digitar `sao paulo` e anotar novamente a quantidade de linhas.
+4. Comparar as duas listas e, se necessário, confirmar pela API com `GET /api/entregas?q=sao%20paulo&limit=100`.
 
 **Resultado esperado:** retornar as mesmas cinco entregas que uma busca por `São Paulo`.
 
@@ -718,8 +784,10 @@
 **Pré-condição:** dados resetados; cinco entregas de São Paulo na massa inicial.
 
 **Passos:**
-1. Pesquisar por `SÃO PAULO`.
-2. Comparar com a busca por `São Paulo`.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. No campo de busca, digitar `São Paulo` e anotar os códigos encontrados.
+3. Limpar o campo, digitar `SÃO PAULO` e anotar os códigos encontrados.
+4. Comparar as duas listas de códigos.
 
 **Resultado esperado:** ambas as buscas devem retornar os mesmos cinco itens.
 
@@ -741,8 +809,11 @@
 **Pré condição:** dados resetados.
 
 **Passos:**
-1. Aplicar, um por vez, os filtros `CRIADA`, `COLETADA`, `EM_TRANSITO`, `SAIU_ENTREGA`, `ENTREGUE` e `DEVOLVIDA`.
-2. Conferir os itens retornados em cada filtro.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. No filtro de status, selecionar `CRIADA`; conferir que todas as linhas exibem `CRIADA` e anotar o contador.
+3. Repetir a ação para `COLETADA`, `EM_TRANSITO`, `SAIU_ENTREGA`, `ENTREGUE` e `DEVOLVIDA`.
+4. Em cada seleção, conferir a coluna **Status** de todas as linhas e comparar o contador com o número de linhas.
+5. Retornar o filtro para **Todos os status** ao final.
 
 **Resultado esperado:** todos os itens retornados devem ter exatamente o status selecionado e o total deve corresponder à quantidade encontrada.
 
@@ -764,8 +835,11 @@
 **Pré condição:** dados resetados; existem entregas `CANCELADA` na massa inicial.
 
 **Passos:**
-1. Aplicar o filtro `CANCELADA` sem marcar **incluir canceladas**.
-2. Repetir a consulta com `incluir_canceladas=true` ou marcando a opção na tela.
+1. Abrir `http://localhost:3000` no Brave e clicar em **Resetar dados**.
+2. Selecionar `CANCELADA` no filtro de status e manter **incluir canceladas** desmarcado; anotar as linhas e o contador.
+3. Marcar **incluir canceladas** sem alterar o filtro `CANCELADA`.
+4. Conferir que as três linhas retornadas exibem `CANCELADA` e comparar o contador com a quantidade de linhas.
+5. Repetir pela API com `GET /api/entregas?status=CANCELADA&limit=100` e `GET /api/entregas?status=CANCELADA&incluir_canceladas=true&limit=100`.
 
 **Resultado esperado:** sem a opção, as canceladas não devem aparecer. Com a opção, devem aparecer somente entregas canceladas e o total deve refletir essa lista.
 
@@ -787,9 +861,10 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Pesquisar por `São Paulo`.
-2. Conferir a quantidade de itens e o campo `total`/contador.
-3. Repetir com o filtro `status=EM_TRANSITO`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/entregas?q=S%C3%A3o%20Paulo&limit=100`; contar `itens` e anotar `total`.
+3. Enviar `GET /api/entregas?status=EM_TRANSITO&limit=100`; contar `itens` e anotar `total`.
+4. Na tela, repetir a busca `São Paulo` e o filtro `EM_TRANSITO`, comparando o contador mostrado com o número de linhas.
 
 **Resultado esperado:** o total deve refletir o filtro: cinco para São Paulo e nove para `EM_TRANSITO` na massa inicial.
 
@@ -811,9 +886,11 @@
 **Pré-condição:** dados resetados; página 1; listagem sem filtro.
 
 **Passos:**
-1. Consultar `GET /api/entregas?page=1&limit=10`.
-2. Contar os itens retornados.
-3. Repetir na página 2 e observar a tabela na UI.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/entregas?page=1&limit=10` e contar `itens`.
+3. Enviar `GET /api/entregas?page=2&limit=10` e contar `itens`.
+4. Na tela, deixar a busca vazia e a caixa de canceladas desmarcada; conferir a quantidade de linhas na página 1.
+5. Clicar em **Próxima** e conferir a quantidade de linhas na página 2.
 
 **Resultado esperado:** cada página não final deve ter exatamente dez itens.
 
@@ -835,9 +912,10 @@
 **Pré condição:** dados resetados; listagem padrão sem filtro e `limit=10`.
 
 **Passos:**
-1. Abrir a última página com resultado.
-2. Conferir a quantidade de itens restantes.
-3. Solicitar a página seguinte, que não possui registros.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/entregas?page=4&limit=10` e contar os itens da última página com resultado.
+3. Enviar `GET /api/entregas?page=5&limit=10` e conferir que `itens` é uma lista vazia.
+4. Na tela, clicar em **Próxima** até chegar à página 4 e conferir as linhas; clicar mais uma vez e conferir a ausência de registros na página 5.
 
 **Resultado esperado:** a última página deve mostrar apenas o restante da lista. A página posterior não deve repetir itens nem apresentar registros indevidos.
 
@@ -859,8 +937,10 @@
 **Pré condição:** dados resetados.
 
 **Passos:**
-1. Consultar a listagem com `limit=1`.
-2. Consultar novamente com `limit=100`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/entregas?page=1&limit=1` e contar `itens`.
+3. Enviar `GET /api/entregas?page=1&limit=100` e contar `itens`.
+4. Conferir que a segunda consulta não contém status `CANCELADA`.
 
 **Resultado esperado:** a primeira consulta deve retornar um item. A segunda deve retornar todas as entregas elegíveis para a listagem padrão, sem canceladas.
 
@@ -884,8 +964,10 @@
 **Pré-condição:** dados resetados; quatro transportadoras ativas e uma inativa.
 
 **Passos:**
-1. Consultar `GET /api/transportadoras`.
-2. Conferir a lista do seletor de transportadora na tela.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/transportadoras` e contar os registros retornados.
+3. Conferir que todos os registros têm `ativa: true`.
+4. Abrir `http://localhost:3000` no Brave, localizar o campo **Transportadora** no formulário **Nova entrega** e contar as opções disponíveis.
 
 **Resultado esperado:** apenas as quatro ativas devem ser retornadas e exibidas para cadastro.
 
@@ -907,8 +989,11 @@
 **Pré-condição:** dados resetados.
 
 **Passos:**
-1. Consultar `GET /api/transportadoras?incluir_inativas=true`.
-2. Conferir a transportadora `id=5` e os CNPJs retornados/exibidos.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/transportadoras?incluir_inativas=true`.
+3. Contar cinco registros, localizar a transportadora `id: 5` e confirmar `ativa: false`.
+4. Conferir que cada `cnpj` possui somente 14 dígitos, sem pontos, barra ou hífen.
+5. Abrir a tela e conferir que os CNPJs exibidos nas linhas mantêm somente dígitos.
 
 **Resultado esperado:** cinco transportadoras, incluindo a inativa; CNPJ armazenado e exibido apenas com dígitos, sem máscara.
 
@@ -932,7 +1017,9 @@
 **Pré-condição:** dados resetados; não existe entrega de id `99999`.
 
 **Passos:**
-1. Enviar `GET /api/entregas/99999`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `GET /api/entregas/99999`.
+3. Anotar o status HTTP e o corpo completo da resposta.
 
 **Resultado esperado:** resposta `404` no formato `{ "erro": "..." }`.
 
@@ -956,9 +1043,11 @@
 **Pré-condição:** aplicação disponível; formulário **Nova entrega** aberto.
 
 **Passos:**
-1. Conferir os rótulos de destinatário, cidade, UF, transportadora, peso e volumes.
-2. Comparar os campos com a lista de obrigatoriedade do README.
-3. Inspecionar se os controles possuem `required` ou `aria-required`.
+1. Abrir `http://localhost:3000` no Brave e rolar até o formulário **Nova entrega**.
+2. Conferir visualmente os rótulos **Destinatário**, **Cidade**, **UF**, **Transportadora**, **Peso (kg)** e **Volumes**, procurando um `*` ao lado do nome.
+3. Conferir que o rótulo **Data de coleta** não possui essa marcação, pois o campo é opcional.
+4. Inspecionar os seis controles no navegador e verificar a existência dos atributos `required` ou `aria-required`.
+5. Comparar a tela com a tabela de obrigatoriedade do README.
 
 **Resultado esperado:** os seis campos obrigatórios devem ser identificados na tela, com `*` no rótulo e marcação de obrigatoriedade no controle. `data_coleta` não deve ser marcada, pois é opcional.
 
@@ -980,9 +1069,11 @@
 **Pré-condição:** dados resetados; transportadora ativa disponível.
 
 **Passos:**
-1. Enviar cadastro válido com `data_coleta: "data inválida"`.
-2. Resetar e repetir com `data_coleta: "2026-02-30"`.
-3. Resetar e repetir com `data_coleta: "2026-13-01"`.
+1. Restaurar os dados com `POST /_reset`.
+2. Enviar `POST /api/entregas` com `{"id_transportadora":1,"destinatario_nome":"Teste data textual","cidade":"Curitiba","uf":"PR","peso_kg":1,"volumes":1,"data_coleta":"data inválida"}`.
+3. Restaurar os dados e repetir com `destinatario_nome:"Teste data impossível"` e `data_coleta:"2026-02-30"`.
+4. Restaurar os dados e repetir com `destinatario_nome:"Teste mês inválido"` e `data_coleta:"2026-13-01"`.
+5. Anotar o status HTTP, a mensagem e a quantidade de entregas criada em cada tentativa.
 
 **Resultado esperado:** as três tentativas devem retornar `422`, informar que a data é inválida e não criar entrega.
 
