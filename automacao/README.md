@@ -39,3 +39,8 @@ Para abrir o Cypress de forma visual, inicie a aplicação em um terminal com
 
 Cada caso restaura os dados iniciais antes de rodar para não depender da ordem
 de execução. Screenshots gerados por falhas ficam fora do versionamento.
+
+Na versão avaliada, os cinco testes falham porque encontram os comportamentos
+documentados nos bugs de status, cadastro, prazo e listagem. Isso é o resultado
+esperado enquanto os defeitos não forem corrigidos: as asserções representam o
+contrato do README e devem passar depois da correção.
