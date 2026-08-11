@@ -1,41 +1,38 @@
 # Decisões
 
-<!--
-Este arquivo vale tanto quanto a lista de problemas encontrados. É aqui que
-você mostra critério: o que escolheu não fazer, o que interpretou por conta
-própria e o que investigou e concluiu que estava certo.
--->
-
 ## 1. O que ficou de fora
-
-<!--
-Liste o que não foi testado e a justificativa. "Faltou tempo" é uma resposta
-aceitável desde que acompanhada do critério que você usou para escolher o que
-sacrificar.
 
 | Item não coberto | Por quê | Risco de deixar assim |
 |---|---|---|
-|  |  |  |
--->
+| Desempenho, carga e concorrência em grande volume | Não há requisito de volume, tempo de resposta ou quantidade de usuários simultâneos. | Médio: lentidão ou comportamento sob carga ainda não foi medido. |
+| Segurança, autenticação e permissões | A aplicação não possui login, perfis ou controle de acesso no escopo fornecido. | Médio: esse tema precisa entrar quando houver usuários e dados reais. |
+| Compatibilidade entre navegadores | A execução manual foi feita no Brave e a automação usou o navegador do Cypress. Não houve matriz de navegadores. | Baixo neste ciclo: diferenças visuais ou de validação nativa podem existir em outros navegadores. |
+| Feriados no prazo | O README define apenas sábado e domingo como dias não úteis. | Baixo enquanto a regra não incluir calendário de feriados. |
 
 ## 2. Ambiguidades e interpretações
 
-<!--
-Pontos em que a documentação não foi conclusiva, a interpretação que você
-adotou e por quê. Se preferiria ter perguntado a alguém, diga a quem e o quê.
--->
+O cálculo de prazo considerou somente sábado e domingo como dias não úteis. Essa foi a interpretação adotada porque é a única regra documentada; feriados devem ser incluídos apenas se a Operação definir o calendário aplicável.
+
+A busca foi validada por código, parte do nome e cidade. A regra de ignorar caixa e acentuação foi tratada como obrigatória, pois está descrita de forma explícita no README.
+
+O README define seis campos obrigatórios, mas não determina como a tela deve indicá-los. Registrei a ausência de marcação e do atributo `required` como problema de usabilidade de severidade média: a regra existe, porém a pessoa usuária só a descobre depois de tentar enviar o formulário.
 
 ## 3. Comportamentos que investiguei e considerei corretos
 
-<!--
-Coisas que estranhou à primeira vista mas que se confirmaram como
-comportamento esperado. Registre o que te fez mudar de ideia.
--->
+O caminho válido de status até `ENTREGUE` e a ramificação `SAIU_ENTREGA → DEVOLVIDA` funcionaram quando executados pela tela.
+
+Entregas canceladas ficam ocultas por padrão e aparecem ao marcar **incluir canceladas**. Esse comportamento está de acordo com a regra documentada.
+
+O formulário apresenta apenas transportadoras ativas e exibe o CNPJ sem máscara. Também foi confirmado que o navegador bloqueia volume fracionado antes do envio do formulário.
 
 ## 4. Critério de severidade
 
-<!-- Como você decidiu o que é Crítico, Alto, Médio e Baixo neste contexto. -->
+**Crítica** foi usada quando a falha pode concluir, cancelar ou rastrear a entrega errada, afetando diretamente a operação e o cliente. **Alta** cobre informação operacional incorreta, cadastro inválido ou prazo errado que exige conferência manual. **Média** abrange busca, contador, paginação e orientação da tela, que prejudicam o trabalho mas têm alternativa de conferência. Não houve achado classificado como baixo.
 
 ## 5. O que eu faria com mais tempo
 
-<!-- Próximos passos, em ordem de prioridade. -->
+1. Retestar cada bug depois da correção e manter os cenários Cypress como regressão.
+2. Exercitar parâmetros inválidos e limites do contrato da API, incluindo páginas, limites e datas.
+3. Definir com a Operação o tratamento de feriados e automatizar o calendário acordado.
+4. Executar testes de carga e concorrência com volume próximo ao uso real.
+5. Avaliar acessibilidade e compatibilidade em outros navegadores.

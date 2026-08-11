@@ -39,8 +39,9 @@ preencher. O detalhamento do que se espera de cada um está no
 
 ## Como rodar
 
-**Requisito:** Node.js 18 ou superior. Nada além disso — o projeto não tem
-dependências externas e não precisa de `npm install`, banco de dados ou Docker.
+**Requisito:** Node.js 18 ou superior. A aplicação em si não tem dependências
+externas e não precisa de banco de dados ou Docker. O `npm install` é necessário
+somente para executar a automação Cypress; veja [automacao/README.md](./automacao/README.md).
 
 ### Já tem o Node instalado?
 
