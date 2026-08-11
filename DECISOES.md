@@ -36,3 +36,7 @@ O formulário apresenta apenas transportadoras ativas e exibe o CNPJ sem máscar
 3. Definir com a Operação o tratamento de feriados e automatizar o calendário acordado.
 4. Executar testes de carga e concorrência com volume próximo ao uso real.
 5. Avaliar acessibilidade e compatibilidade em outros navegadores.
+
+## 6. Recomendação de evolução
+
+Implementar contas individuais para administradores e demais pessoas que cadastram ou atualizam entregas. Cada criação, alteração de status, cancelamento e edição deve registrar quem realizou a ação, quando ela ocorreu e quais dados foram modificados. Esse histórico de auditoria facilita a investigação de divergências, evita alterações sem responsável identificado e dá mais segurança para a Operação usar o sistema como fonte de consulta.
